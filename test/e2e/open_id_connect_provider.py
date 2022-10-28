@@ -94,7 +94,6 @@ def get(oidc_provider_arn):
     """
     c = boto3.client('iam')
     try:
-        # TODO continue here
         resp = c.get_open_id_connect_provider(OpenIDConnectProviderArn=oidc_provider_arn)
         return resp
     except c.exceptions.NoSuchEntityException:
