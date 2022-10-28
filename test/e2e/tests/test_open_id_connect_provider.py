@@ -133,27 +133,8 @@ class TestOpenIdConnectProvider:
         logging.info(f"\n\n**** OIDCProvider updated: {latest}")
         assert len(latest["ThumbprintList"]) == 1
         assert latest["ThumbprintList"][0] == new_thumbprints[0]
-        found_tag = False
-        for t in latest["Tags"]:
-            if t["Key"] == "tag2":
-                assert t["Value"] == "val2"
-                found_tag = True
-        assert found_tag
 
-        # Same update code path check for tags...
-        # logging.debug(f"\n\n**** OIDCProvider get tags")
-        # latest_tags = open_id_connect_provider.get_tags(oidc_provider_arn)
-        # before_update_expected_tags = [{"Key": "tag2", "Value": "val2"}]
-        # # assert tag.cleaned(latest_tags) == before_update_expected_tags
-        # logging.info(f"**** got tags: {tag.cleaned(latest_tags)}")
-
-        # new_tags = [{"Key": "foo", "Value": "bar"}]
-        # updates = {"spec": {"tags": new_tags}}
-        # logging.debug(f"\n\n**** OIDCProvider update tags")
-        # k8s.patch_custom_resource(ref, updates)
-        # time.sleep(MODIFY_WAIT_AFTER_SECONDS)
-
-        # after_update_expected_tags = [{"Key": "foo", "Value": "bar"}]
-        # logging.info(f"\n\n**** OIDCProvider validate tags update")
-        # latest_tags = open_id_connect_provider.get_tags(oidc_provider_arn)
-        # assert tag.cleaned(latest_tags) == after_update_expected_tags
+        after_update_expected_tags = [{"Key": "key2", "Value": "val2"}]
+        logging.info(f"\n\n**** OIDCProvider validate tags update")
+        latest_tags = open_id_connect_provider.get_tags(oidc_provider_arn)
+        assert tag.cleaned(latest_tags) == after_update_expected_tags
