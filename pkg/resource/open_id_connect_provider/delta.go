@@ -57,8 +57,8 @@ func newResourceDelta(
 		// however, when stored in the IAM backend, the "https://" prefix is stripped out
 		// thus here we treat "https://" as a null token for the purposes of string comparison
 		if (*a.ko.Spec.URL != *b.ko.Spec.URL) {
-			a_url := strings.TrimPrefix("https://", *a.ko.Spec.URL)
-			b_url := strings.TrimPrefix("https://", *b.ko.Spec.URL)
+			a_url := strings.TrimPrefix(*a.ko.Spec.URL, "https://")
+			b_url := strings.TrimPrefix(*b.ko.Spec.URL, "https://")
 			if a_url != b_url {
 				delta.Add("Spec.URL", a.ko.Spec.URL, b.ko.Spec.URL)
 		   }
