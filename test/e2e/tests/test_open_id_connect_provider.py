@@ -60,7 +60,7 @@ def oidc_provider():
         additional_replacements=replacements,
     )
 
-    logging.info(f"**** Pytest fixture creating: {resource_data}")
+    logging.debug(f"**** Pytest fixture creating: {resource_data}")
     ref = k8s.CustomResourceReference(
         CRD_GROUP,
         CRD_VERSION,
@@ -71,7 +71,7 @@ def oidc_provider():
     k8s.create_custom_resource(ref, resource_data)
     cr = k8s.wait_resource_consumed_by_controller(ref)
 
-    logging.info(f"**** Pytest fixture created: {cr['spec']}")
+    logging.debug(f"**** Pytest fixture created: {cr['spec']}")
     yield (ref, cr)
 
     # Delete the OIDC provider when tests complete
@@ -159,7 +159,7 @@ class TestOpenIdConnectProvider:
         time.sleep(MODIFY_WAIT_AFTER_SECONDS)
 
         cr = k8s.get_resource(ref)
-        logging.info(f"\n\n**** OIDCProvider CR updated: {cr}")
+        logging.debug(f"\n\n**** OIDCProvider CR updated: {cr}")
         assert cr is not None
         assert "status" in cr
         cr_conditions = cr["status"]["conditions"]
