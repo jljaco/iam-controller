@@ -148,4 +148,29 @@ class TestOpenIdConnectProvider:
         latest_tags = open_id_connect_provider.get_tags(oidc_provider_arn)
         assert tag.cleaned(latest_tags) == after_update_expected_tags
 
-        # TODO validate that changing the URL results in a terminal condition
+        # validate that changing the URL results in a terminal condition
+        update_url = {
+            "spec": {
+                "url" : "https://some.other.domain.com"
+            }
+        }
+        logging.debug(f"\n\n**** OIDCProvider update of URL intended to fail")
+        k8s.patch_custom_resource(ref, update_url)
+        time.sleep(MODIFY_WAIT_AFTER_SECONDS)
+
+        cr = k8s.get_resource(ref)
+        logging.info(f"\n\n**** OIDCProvider CR updated: {cr}")
+        assert cr is not None
+        assert "status" in cr
+        cr_conditions = cr["status"]["conditions"]
+        cond_synced_found = False
+        cond_terminal_found = False
+        for cond in cr_conditions:
+            if cond["type"] == "ACK.ResourceSynced":
+                assert cond["status"] == False or cond["status"] == "False"
+                cond_synced_found = True
+            if cond["type"] == "ACK.Terminal":
+                assert cond["status"] == True or cond["status"] == "True"
+                assert cond["message"] == "Immutable Spec fields have been modified: URL"
+                cond_terminal_found = True
+        assert cond_synced_found and cond_terminal_found
