@@ -44,9 +44,6 @@ func (rm *resourceManager) customUpdateOpenIDConnectProvider(
 		return nil, ackerr.NewTerminalError(fmt.Errorf(msg))
 	}
 
-	ko := desired.ko.DeepCopy()
-	rm.setStatusDefaults(ko)
-
 	if delta.DifferentAt("Spec.ThumbprintList") {
 		// Update the thumbprint list
 		thumbprintInput, err := rm.newUpdateThumbprintRequestPayload(ctx, desired)
@@ -118,16 +115,16 @@ func (rm *resourceManager) customUpdateOpenIDConnectProvider(
 	}
 
 	if delta.DifferentAt("Spec.Tags") {
-		if err := rm.syncTags(ctx, &resource{ko}); err != nil {
+		if err := rm.syncTags(ctx, desired); err != nil {
 			return nil, err
 		}
 	}
 	// There really isn't a status of a role... it either exists or doesn't. If
 	// we get here, that means the update was successful and the desired state
 	// of the role matches what we provided...
-	ackcondition.SetSynced(&resource{ko}, corev1.ConditionTrue, nil, nil)
+	ackcondition.SetSynced(desired, corev1.ConditionTrue, nil, nil)
 
-	return &resource{ko}, nil
+	return desired, nil
 }
 
 // custom comparison function for comparing
