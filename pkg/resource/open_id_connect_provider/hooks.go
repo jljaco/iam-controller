@@ -37,9 +37,7 @@ func (rm *resourceManager) customUpdateOpenIDConnectProvider(
 ) (updated *resource, err error) {
 	rlog := ackrtlog.FromContext(ctx)
 	exit := rlog.Trace("rm.customUpdateOpenIDConnectProvider")
-	defer func() {
-		exit(err)
-	}()
+	defer func() { exit(err) }()
 
 	if immutableFieldChanges := rm.getImmutableFieldChanges(delta); len(immutableFieldChanges) > 0 {
 		msg := fmt.Sprintf("Immutable Spec fields have been modified: %s", strings.Join(immutableFieldChanges, ","))
@@ -174,7 +172,7 @@ func (rm *resourceManager) syncTags(
 ) (err error) {
 	rlog := ackrtlog.FromContext(ctx)
 	exit := rlog.Trace("rm.syncTags")
-	defer exit(err)
+	defer func() { exit(err) }()
 	toAdd := []*svcapitypes.Tag{}
 	toDelete := []*svcapitypes.Tag{}
 
@@ -242,7 +240,7 @@ func (rm *resourceManager) getTags(
 	var resp *svcsdk.ListOpenIDConnectProviderTagsOutput
 	rlog := ackrtlog.FromContext(ctx)
 	exit := rlog.Trace("rm.getTags")
-	defer exit(err)
+	defer func() { exit(err) }()
 
 	input := &svcsdk.ListOpenIDConnectProviderTagsInput{}
 	input.OpenIDConnectProviderArn = (*string)(r.ko.Status.ACKResourceMetadata.ARN)
@@ -272,7 +270,7 @@ func (rm *resourceManager) addTags(
 ) (err error) {
 	rlog := ackrtlog.FromContext(ctx)
 	exit := rlog.Trace("rm.addTag")
-	defer exit(err)
+	defer func() { exit(err) }()
 
 	input := &svcsdk.TagOpenIDConnectProviderInput{}
 	input.OpenIDConnectProviderArn = (*string)(r.ko.Status.ACKResourceMetadata.ARN)
@@ -295,7 +293,7 @@ func (rm *resourceManager) removeTags(
 ) (err error) {
 	rlog := ackrtlog.FromContext(ctx)
 	exit := rlog.Trace("rm.removeTag")
-	defer exit(err)
+	defer func() { exit(err) }()
 
 	input := &svcsdk.UntagOpenIDConnectProviderInput{}
 	input.OpenIDConnectProviderArn = (*string)(r.ko.Status.ACKResourceMetadata.ARN)
