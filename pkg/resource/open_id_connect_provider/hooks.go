@@ -221,7 +221,7 @@ func inTags(
 	tags []*svcapitypes.Tag,
 ) bool {
 	for _, t := range tags {
-		if *t.Key == key && *t.Value == value {
+		if *t.Key == key && t.Value != nil && *t.Value == value {
 			return true
 		}
 	}
