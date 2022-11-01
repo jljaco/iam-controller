@@ -46,6 +46,9 @@ func (rm *resourceManager) customUpdateOpenIDConnectProvider(
 		return nil, ackerr.NewTerminalError(fmt.Errorf(msg))
 	}
 
+	ko := desired.ko.DeepCopy()
+	rm.setStatusDefaults(ko)
+
 	if delta.DifferentAt("Spec.ThumbprintList") {
 		// Update the thumbprint list
 		thumbprintInput, err := rm.newUpdateThumbprintRequestPayload(ctx, desired)
@@ -116,11 +119,6 @@ func (rm *resourceManager) customUpdateOpenIDConnectProvider(
 		}
 	}
 
-	// Merge in the information we read from the API call above to the copy of
-	// the original Kubernetes object we passed to the function
-	ko := desired.ko.DeepCopy()
-
-	rm.setStatusDefaults(ko)
 	if delta.DifferentAt("Spec.Tags") {
 		if err := rm.syncTags(ctx, &resource{ko}); err != nil {
 			return nil, err
